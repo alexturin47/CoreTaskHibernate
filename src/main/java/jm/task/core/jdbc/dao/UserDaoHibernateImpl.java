@@ -61,9 +61,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void removeUserById(long id) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        User user = new User();
-        user.setId(id);
-        session.delete(user);
+        session.delete(session.get(User.class, id));
         transaction.commit();
         session.close();
     }
@@ -71,15 +69,7 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         Session session = sessionFactory.openSession();
-
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery cq =  cb.createQuery(User.class);
-        Root<User> root = cq.from(User.class);
-        //cq.select(root);
-        Query query = session.createQuery(cq);
-        List<User> usersList  = query.getResultList();
-        session.close();
-        return usersList;
+        return session.createQuery("from User", User.class).getResultList();
     }
 
 
